@@ -1,5 +1,6 @@
-// energy-neon-card v1.3.0 \u2014 \u043D\u0435\u043E\u043D\u043E\u0432\u0430 \u043A\u0430\u0440\u0442\u043A\u0430 \u043F\u043E\u0442\u043E\u043A\u0456\u0432 \u0435\u043D\u0435\u0440\u0433\u0456\u0457 (\u043C\u0435\u0440\u0435\u0436\u0430 / \u0410\u041A\u0411 / \u0434\u0456\u043C)
-const ENC_VERSION = '1.3.0';
+// energy-neon-card v1.4.0 \u2014 \u043D\u0435\u043E\u043D\u043E\u0432\u0430 \u043A\u0430\u0440\u0442\u043A\u0430 \u043F\u043E\u0442\u043E\u043A\u0456\u0432 \u0435\u043D\u0435\u0440\u0433\u0456\u0457 (\u043C\u0435\u0440\u0435\u0436\u0430 / \u0410\u041A\u0411 / \u0434\u0456\u043C)
+// v1.4.0: grid.frequency \u0456 grid.power_factor \u043F\u0456\u0434 \u043C\u0435\u0440\u0435\u0436\u0435\u044E (A \u00B7 V \u00B7 Hz, cos \u03C6), \u043F\u0456\u0434\u043F\u0438\u0441 \u041C\u0415\u0420\u0415\u0416\u0410 \u0432\u043D\u0438\u0437\u0443
+const ENC_VERSION = '1.4.0';
 
 class EnergyNeonCard extends HTMLElement {
   setConfig(c) {
@@ -151,8 +152,8 @@ class EnergyNeonCard extends HTMLElement {
    </defs>
 
    <!-- \u043B\u0456\u043D\u0456\u0457 -->
-   <path id="fg-base" class="base g" d="M330 140 V210 H262"/>
-   <path id="fg" class="dots g" d="M330 140 V210 H262"/>
+   <path id="fg-base" class="base g" d="M330 158 V210 H262"/>
+   <path id="fg" class="dots g" d="M330 158 V210 H262"/>
    <path id="fb-base" class="base b" d="M70 282 V210 H138"/>
    <path id="fb" class="dots b" d="M70 282 V210 H138"/>
    <path id="fh-base" class="base h" d="M200 272 V330 H290"/>
@@ -201,7 +202,8 @@ class EnergyNeonCard extends HTMLElement {
    </g>
    <text id="gv" x="330" y="108" text-anchor="middle" class="v" style="fill:#7fd0ff">\u2014</text>
    <text id="gs" x="330" y="123" text-anchor="middle" class="s">\u2014</text>
-   <text x="330" y="136" text-anchor="middle" class="l">\u041C\u0415\u0420\u0415\u0416\u0410</text>
+   <text id="gpf" x="330" y="137" text-anchor="middle" class="s" style="fill:#7fd0ff;font-weight:600"></text>
+   <text x="330" y="151" text-anchor="middle" class="l">\u041C\u0415\u0420\u0415\u0416\u0410</text>
 
    <!-- \u0431\u0430\u0442\u0430\u0440\u0435\u044F -->
    <g transform="translate(70,330)">
@@ -282,7 +284,11 @@ class EnergyNeonCard extends HTMLElement {
     this._$('gnode').classList.toggle('off', !gridOn);
     this._$('gv').textContent = gridOn ? (gp !== null ? (gp >= 0 ? '\u2193 ' : '\u2191 ') + this._pw(gp) : '\u2014') : '\u041D\u0415\u041C\u0410\u0404';
     this._$('gv').style.fill = gridOn ? '#7fd0ff' : '#ff6b78';
-    this._$('gs').textContent = gridOn ? (gcur !== null ? gcur.toFixed(1) + ' A \u00B7 ' : '') + this._f(gvolt, 0, 'V') : '\u0432\u0456\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044F';
+    const gfr = this._num(g.frequency);
+    this._$('gs').textContent = gridOn ? (gcur !== null ? gcur.toFixed(1) + ' A \u00B7 ' : '') + this._f(gvolt, 0, 'V') + (gfr !== null ? ' \u00B7 ' + gfr.toFixed(2) + ' Hz' : '') : '\u0432\u0456\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044F';
+    let gpf = this._num(g.power_factor);
+    if (gpf !== null && gpf > 1.5) gpf = gpf / 100;
+    this._$('gpf').textContent = gridOn && gpf !== null ? 'cos \u03C6 ' + gpf.toFixed(2) + ' \u00B7 PF ' + Math.round(gpf * 100) + '%' : '';
     this._flow('fg', gridOn ? gp : 0, gp !== null && gp < 0);
 
     // \u0431\u0430\u0442\u0430\u0440\u0435\u044F
