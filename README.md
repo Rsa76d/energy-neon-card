@@ -14,6 +14,7 @@ Neon-style animated power-flow card for Home Assistant: **grid → inverter → 
 - Animated flow dots on grid / battery / home lines — direction follows the power sign, speed follows the power.
 - Grid pylon glows when grid is present; turns grey with a red cross during an outage (grid voltage `unavailable` or < 100 V). Header badge and top stripe switch between **МЕРЕЖА** (blue) and **БАТАРЕЯ** (green).
 - Battery with animated liquid level and waves; colour by SoC (green / amber < 30 % / red < 15 %), wave speed follows the current.
+- Under the pylon: grid power, `A · V · Hz` and `cos φ · PF %` (optional `grid.frequency` / `grid.power_factor`).
 - Centre ring: inverter load in % of `max_power`, grid voltage (and frequency, if given), inverter status text.
 - Hourglass: remaining runtime while discharging, time to full while charging.
 - Energy tiles for **day / week / month / all time** (import, home consumption, battery charge / discharge), read from HA long-term statistics — no reset needed.
@@ -41,6 +42,8 @@ grid:
   power: sensor.grid_power         # W, + import
   voltage: sensor.grid_voltage     # V, unavailable/<100 V = outage
   current: sensor.grid_current     # A (optional)
+  frequency: sensor.grid_frequency # Hz (optional), shown under the pylon: A · V · Hz
+  power_factor: sensor.grid_pf     # cos φ 0…1 or % (optional), shown as "cos φ 0.96 · PF 96%"
 frequency: sensor.grid_frequency   # Hz (optional)
 battery:
   power: sensor.bank_power         # W, + charge / − discharge
